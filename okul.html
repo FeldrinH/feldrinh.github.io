@@ -1,0 +1,63 @@
+<script type='text/javascript' src='tinycolor.js'></script>
+<script type='text/javascript'>
+	var maskData;
+	var maskCanvas = document.createElement('canvas');
+	maskCanvas.width  = 200;
+	maskCanvas.height = 300;
+	function loadOkul()
+	{
+		var maskImage = new Image();
+		//maskImage.crossOrigin = "anonymous";
+		maskImage.onload = function() {
+			maskCanvas.getContext("2d").drawImage(maskImage,0,0);
+			maskData = maskCanvas.getContext("2d").getImageData(0,0,200,300);
+			//document.getElementById("root").appendChild(maskCanvas);
+		}
+		maskImage.src = "okulMask.png";
+		
+		
+		var okulCanvas = document.getElementById("okulCanvas").getContext("2d");
+		var okulImage = new Image();
+		//okulImage.crossOrigin = "anonymous";
+		okulImage.onload = function() {
+			okulCanvas.drawImage(okulImage,0,0);
+			console.log("done");
+		}
+		okulImage.src = "okulImage.png";
+	}
+	function updateOkul()
+	{
+		var okulCanvas = document.getElementById("okulCanvas").getContext("2d");
+		var okulData = okulCanvas.getImageData(0,0,200,300);
+		var curColor;
+		console.log(maskData.data.length);
+		console.log(okulData.data.length);
+		for(var i = 0; i < okulData.data.length; i+=4)
+		{	
+			if(okulData.data[i+3] != 0 || maskData.data[i+3] != 0)
+			{
+				//console.log("LgOk1");
+				if(maskData.data[i] == 255)
+				{
+					//console.log(okulData.data[i]);
+					curColor = tinycolor({ r: okulData.data[i], g: okulData.data[i+1], b: okulData.data[i+2], a: 1.0}).spin(180).toRgb();
+					okulData.data[i] = curColor.r;
+					okulData.data[i+1] = curColor.g;
+					okulData.data[i+2] = curColor.b;
+				}
+				/*else if(maskData[i+2] == 255)
+				{
+
+				}*/
+				
+			} 
+		}
+		okulCanvas.putImageData(okulData,0,0);
+		console.log("Jes");
+	}
+</script>
+<body onLoad="loadOkul()" id="root">
+	<canvas id="okulCanvas" width="200" height="300"></canvas>
+	<br>
+	<button onclick="updateOkul()">updateOkulFunc</button>
+</body>
