@@ -1,17 +1,21 @@
 <script type='text/javascript' src='tinycolor.js'></script>
 <script type='text/javascript'>
+	var okulW = 436;
+	var okulH = 400;
 	var maskData;
-	var maskCanvas = document.createElement('canvas');
-	maskCanvas.width  = 200;
-	maskCanvas.height = 300;
-	function loadOkul()
-	{
+	var okulRaw;
+	function loadOkul() {
+		document.getElementById("okulCanvas").width = okulW;
+		document.getElementById("okulCanvas").height = okulH;
+	
+		var maskCanvas = document.createElement('canvas');
+		maskCanvas.width  = okulW;
+		maskCanvas.height = okulH;
 		var maskImage = new Image();
 		//maskImage.crossOrigin = "anonymous";
 		maskImage.onload = function() {
 			maskCanvas.getContext("2d").drawImage(maskImage,0,0);
-			maskData = maskCanvas.getContext("2d").getImageData(0,0,200,300);
-			//document.getElementById("root").appendChild(maskCanvas);
+			maskData = maskCanvas.getContext("2d").getImageData(0,0,okulW,okulH).data;
 		}
 		maskImage.src = "okulMask.png";
 		
@@ -21,43 +25,77 @@
 		//okulImage.crossOrigin = "anonymous";
 		okulImage.onload = function() {
 			okulCanvas.drawImage(okulImage,0,0);
-			console.log("done");
+			okulRaw = okulCanvas.getImageData(0,0,okulW,okulH).data;
 		}
 		okulImage.src = "okulImage.png";
 	}
-	function updateOkul()
+	
+	/*PartId:
+	1 - Upper Body (255,0,0)
+	2 - Middle Body (0,0,255)
+	3 - Bottom Body (0,255,0)
+	4 - Ears (0,0,128)
+	5 - Wings (128,0,0)
+	*/ 
+	function updateOkul(partId)
 	{
 		var okulCanvas = document.getElementById("okulCanvas").getContext("2d");
-		var okulData = okulCanvas.getImageData(0,0,200,300);
+		var okulData = okulCanvas.getImageData(0,0,okulW,okulH);
 		var curColor;
-		console.log(maskData.data.length);
-		console.log(okulData.data.length);
+		var targetHue = +document.getElementById("OkulPart-" + partId).value;
+		
 		for(var i = 0; i < okulData.data.length; i+=4)
 		{	
-			if(okulData.data[i+3] != 0 || maskData.data[i+3] != 0)
+			if(okulRaw[i+3] != 0 || maskData[i+3] != 0)
 			{
-				//console.log("LgOk1");
-				if(maskData.data[i] == 255)
+				if(partId == 1 && maskData[i] == 255)
 				{
-					//console.log(okulData.data[i]);
-					curColor = tinycolor({ r: okulData.data[i], g: okulData.data[i+1], b: okulData.data[i+2], a: 1.0}).spin(180).toRgb();
+					curColor = tinycolor({ r: okulRaw[i], g: okulRaw[i+1], b: okulRaw[i+2], a: okulRaw[i+3] }).toHsl();
+					curColor.h = targetHue;
+					curColor.s = Math.min(curColor.s + 0.3, 1.0);
+					curColor = tinycolor(curColor).toRgb();
 					okulData.data[i] = curColor.r;
 					okulData.data[i+1] = curColor.g;
 					okulData.data[i+2] = curColor.b;
 				}
-				/*else if(maskData[i+2] == 255)
+				else if(partId == 2 && maskData[i+2] == 255 )
 				{
-
-				}*/
+					curColor = tinycolor({ r: okulRaw[i], g: okulRaw[i+1], b: okulRaw[i+2], a: okulRaw[i+3] }).toHsl();
+					curColor.h = targetHue;
+					curColor.s = Math.min(curColor.s + 0.3, 1.0);
+					curColor = tinycolor(curColor).toRgb();
+					okulData.data[i] = curColor.r;
+					okulData.data[i+1] = curColor.g;
+					okulData.data[i+2] = curColor.b;
+				}
+				else if(partId == 3 && maskData[i+1] == 255 )
+				{
+					curColor = tinycolor({ r: okulRaw[i], g: okulRaw[i+1], b: okulRaw[i+2], a: okulRaw[i+3] }).toHsl();
+					curColor.h = targetHue;
+					curColor.s = Math.min(curColor.s + 0.3, 1.0);
+					curColor = tinycolor(curColor).toRgb();
+					okulData.data[i] = curColor.r;
+					okulData.data[i+1] = curColor.g;
+					okulData.data[i+2] = curColor.b;
+				}
 				
 			} 
 		}
 		okulCanvas.putImageData(okulData,0,0);
-		console.log("Jes");
+		//console.log("Jes");
 	}
 </script>
+<style>
+input.hueSlider {
+    width: 302px;
+	margin-left: 9px;
+}
+</style>
 <body onLoad="loadOkul()" id="root">
-	<canvas id="okulCanvas" width="200" height="300"></canvas>
+	<canvas id="okulCanvas" width="300" height="300"></canvas>
 	<br>
-	<button onclick="updateOkul()">updateOkulFunc</button>
+	<input type="range" onchange="updateOkul(1)" id="OkulPart-1" class="hueSlider" min="0" max="360"> <br>
+	<input type="range" onchange="updateOkul(2)" id="OkulPart-2" class="hueSlider" min="0" max="360"> <br>
+	<input type="range" onchange="updateOkul(3)" id="OkulPart-3" class="hueSlider" min="0" max="360"> <br>
+	<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/HueScale.svg/320px-HueScale.svg.png">
 </body>
