@@ -3,8 +3,7 @@
 <script type='text/javascript'>
 	var okulW = 436;
 	var okulH = 400;
-	var partCoord = [[20,20]];
-	var partColors = [{h:20, s:0.3},{h:128, s:1.0}];
+	var partCoords = [[20,20]];
 	var maskData;
 	var okulRaw;
 	function loadOkul() {
@@ -37,101 +36,78 @@
 		okulImage.src = "okulImage.png";
 	}
 	
-	/*PartId:
-	0 - Upper Body (40)
-	1 - Middle Body (80)
-	2 - Bottom Body (120)
-	3 - Ears (160)
-	4 - Wings (200)
+	/*PartColor:
+	40 - Upper Body
+	80 - Middle Body
+	120 - Bottom Body
+	160 - Ears
+	200 - Wings
 	*/ 
-	function updateOkul(partId)
+	function updateOkul(targetHue,partId)
 	{
 		var okulCanvas = document.getElementById("okulCanvas").getContext("2d");
 		var okulData = okulCanvas.getImageData(0,0,okulW,okulH);
 		var curColor;
-		var targetHue = +document.getElementById("OkulPart-" + partId).value;
 		
 		for(var i = 0; i < okulData.data.length; i+=4)
 		{	
-			if(okulRaw[i+3] != 0 || maskData[i+3] != 0)
+			if(maskData[i] == partId && okulRaw[i+3] != 0)
 			{
-				if(partId == 0 && maskData[i] == 255)
-				{
-					curColor = tinycolor({ r: okulRaw[i], g: okulRaw[i+1], b: okulRaw[i+2], a: okulRaw[i+3] }).toHsl();
-					curColor.h = targetHue;
-					curColor.s = Math.min(curColor.s + 0.3, 1.0);
-					curColor = tinycolor(curColor).toRgb();
-					okulData.data[i] = curColor.r;
-					okulData.data[i+1] = curColor.g;
-					okulData.data[i+2] = curColor.b;
-				}
-				else if(partId == 1 && maskData[i+2] == 255 )
-				{
-					curColor = tinycolor({ r: okulRaw[i], g: okulRaw[i+1], b: okulRaw[i+2], a: okulRaw[i+3] }).toHsl();
-					curColor.h = targetHue;
-					curColor.s = Math.min(curColor.s + 0.3, 1.0);
-					curColor = tinycolor(curColor).toRgb();
-					okulData.data[i] = curColor.r;
-					okulData.data[i+1] = curColor.g;
-					okulData.data[i+2] = curColor.b;
-				}
-				else if(partId == 2 && maskData[i+1] == 255 )
-				{
-					curColor = tinycolor({ r: okulRaw[i], g: okulRaw[i+1], b: okulRaw[i+2], a: okulRaw[i+3] }).toHsl();
-					curColor.h = targetHue;
-					curColor.s = Math.min(curColor.s + 0.3, 1.0);
-					curColor = tinycolor(curColor).toRgb();
-					okulData.data[i] = curColor.r;
-					okulData.data[i+1] = curColor.g;
-					okulData.data[i+2] = curColor.b;
-				}
-				
+				curColor = tinycolor({ r: okulRaw[i], g: okulRaw[i+1], b: okulRaw[i+2], a: okulRaw[i+3] }).toHsl();
+				curColor.h = targetHue;
+				curColor.s = Math.min(curColor.s + 0.3, 1.0);
+				curColor = tinycolor(curColor).toRgb();
+				okulData.data[i] = curColor.r;
+				okulData.data[i+1] = curColor.g;
+				okulData.data[i+2] = curColor.b;
 			} 
 		}
 		okulCanvas.putImageData(okulData,0,0);
 		//console.log("Jes");
 	}
 
-	function openColorMenu(partId)
+	function toggleColorMenu(partId)
 	{
 		
 	}
 </script>
 <style>
-input.hueSlider {
-    width: 302px;
-	margin-left: 9px;
-}
-div.colorButton{
-	position:relative; 
-	width: 40; 
-	height: 40;
-	float: left;
-	border-style: solid;
-	border-width: 2px;
-	border-color: #000000;
-	margin-right: 2px;
-}
-div.hiddenMenu{
-
-}
+	input.hueSlider {
+    	width: 302px;
+    	cursor: pointer;
+		margin-left: 9px;
+	}
+	div.colorButton{
+		position:relative; 
+		width: 40; 
+		height: 40;
+		cursor: pointer;
+		float: left;
+		border-style: solid;
+		border-width: 2px;
+		border-color: #000000;
+		margin-right: 2px;
+	}
+	div.hiddenMenu{
+	
+	}
 </style>
 <body onLoad="loadOkul()" id="root">
 	<div id="okulPanel" style="position: relative;">
 		<canvas id="okulCanvas" width="300" height="300" style="position: absolute;"></canvas>
 		<img src="transp.png" id="clickOverlay" usemap="#okulMap" width="300" height="300" style="position: absolute;">
 		<map name="okulMap">
-			<area href="javascript:openColorMenu(1)" shape="poly" coords="64,179,83,276,374,274,364,172">
+			<area href="javascript:toggleColorMenu(1)" shape="poly" coords="64,179,83,276,374,274,364,172">
 		</map>
 		<div id="colorMenu" class="" style="position:absolute;">
-			<div class="colorButton" style="background-color: #FF0000"></div>
-			<div class="colorButton" style="background-color: #FF0000"></div>
-			<div class="colorButton" style="background-color: #FF0000"></div>
+			<div class="colorButton" onclick="updateOkul(0,80);" style="background-color: #FF0000"></div>
+			<div class="colorButton" onclick="updateOkul(120,80);" style="background-color: #00FF00"></div>
+			<div class="colorButton" onclick="updateOkul(240,80);" style="background-color: #0000FF"></div>
 		</div>
 	</div>
-	<input type="range" onchange="updateOkul(0)" id="OkulPart-0" class="hueSlider" min="0" max="360"> <br>
-	<input type="range" onchange="updateOkul(1)" id="OkulPart-1" class="hueSlider" min="0" max="360"> <br>
-	<input type="range" onchange="updateOkul(2)" id="OkulPart-2" class="hueSlider" min="0" max="360"> <br>
+	<input type="range" onchange="updateOkul(+this.value,40);" id="OkulPart-0" class="hueSlider" min="0" max="360"> <br>
+	<input type="range" onchange="updateOkul(+this.value,80);" id="OkulPart-1" class="hueSlider" min="0" max="360"> <br>
+	<input type="range" onchange="updateOkul(+this.value,120);" id="OkulPart-2" class="hueSlider" min="0" max="360"> <br>
 	<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/HueScale.svg/320px-HueScale.svg.png">
 	<form>
 		<input type="text" placeholder="Nimi"> <br>
