@@ -3,11 +3,17 @@
 <script type='text/javascript'>
 	var okulW = 436;
 	var okulH = 400;
+	var partCoord = [[20,20]];
+	var partColors = [{h:20, s:0.3},{h:128, s:1.0}];
 	var maskData;
 	var okulRaw;
 	function loadOkul() {
 		document.getElementById("okulCanvas").width = okulW;
 		document.getElementById("okulCanvas").height = okulH;
+		document.getElementById("okulPanel").style.width = okulW;
+		document.getElementById("okulPanel").style.height = okulH;
+		document.getElementById("clickOverlay").width = okulW;
+		document.getElementById("clickOverlay").height = okulH;
 	
 		var maskCanvas = document.createElement('canvas');
 		maskCanvas.width  = okulW;
@@ -32,11 +38,11 @@
 	}
 	
 	/*PartId:
-	1 - Upper Body (255,0,0)
-	2 - Middle Body (0,0,255)
-	3 - Bottom Body (0,255,0)
-	4 - Ears (0,0,128)
-	5 - Wings (128,0,0)
+	0 - Upper Body (40)
+	1 - Middle Body (80)
+	2 - Bottom Body (120)
+	3 - Ears (160)
+	4 - Wings (200)
 	*/ 
 	function updateOkul(partId)
 	{
@@ -49,7 +55,7 @@
 		{	
 			if(okulRaw[i+3] != 0 || maskData[i+3] != 0)
 			{
-				if(partId == 1 && maskData[i] == 255)
+				if(partId == 0 && maskData[i] == 255)
 				{
 					curColor = tinycolor({ r: okulRaw[i], g: okulRaw[i+1], b: okulRaw[i+2], a: okulRaw[i+3] }).toHsl();
 					curColor.h = targetHue;
@@ -59,7 +65,7 @@
 					okulData.data[i+1] = curColor.g;
 					okulData.data[i+2] = curColor.b;
 				}
-				else if(partId == 2 && maskData[i+2] == 255 )
+				else if(partId == 1 && maskData[i+2] == 255 )
 				{
 					curColor = tinycolor({ r: okulRaw[i], g: okulRaw[i+1], b: okulRaw[i+2], a: okulRaw[i+3] }).toHsl();
 					curColor.h = targetHue;
@@ -69,7 +75,7 @@
 					okulData.data[i+1] = curColor.g;
 					okulData.data[i+2] = curColor.b;
 				}
-				else if(partId == 3 && maskData[i+1] == 255 )
+				else if(partId == 2 && maskData[i+1] == 255 )
 				{
 					curColor = tinycolor({ r: okulRaw[i], g: okulRaw[i+1], b: okulRaw[i+2], a: okulRaw[i+3] }).toHsl();
 					curColor.h = targetHue;
@@ -85,19 +91,47 @@
 		okulCanvas.putImageData(okulData,0,0);
 		//console.log("Jes");
 	}
+
+	function openColorMenu(partId)
+	{
+		
+	}
 </script>
 <style>
 input.hueSlider {
     width: 302px;
 	margin-left: 9px;
 }
+div.colorButton{
+	position:relative; 
+	width: 40; 
+	height: 40;
+	float: left;
+	border-style: solid;
+	border-width: 2px;
+	border-color: #000000;
+	margin-right: 2px;
+}
+div.hiddenMenu{
+
+}
 </style>
 <body onLoad="loadOkul()" id="root">
-	<canvas id="okulCanvas" width="300" height="300"></canvas>
-	<br>
+	<div id="okulPanel" style="position: relative;">
+		<canvas id="okulCanvas" width="300" height="300" style="position: absolute;"></canvas>
+		<img src="transp.png" id="clickOverlay" usemap="#okulMap" width="300" height="300" style="position: absolute;">
+		<map name="okulMap">
+			<area href="javascript:openColorMenu(1)" shape="poly" coords="64,179,83,276,374,274,364,172">
+		</map>
+		<div id="colorMenu" class="" style="position:absolute;">
+			<div class="colorButton" style="background-color: #FF0000"></div>
+			<div class="colorButton" style="background-color: #FF0000"></div>
+			<div class="colorButton" style="background-color: #FF0000"></div>
+		</div>
+	</div>
+	<input type="range" onchange="updateOkul(0)" id="OkulPart-0" class="hueSlider" min="0" max="360"> <br>
 	<input type="range" onchange="updateOkul(1)" id="OkulPart-1" class="hueSlider" min="0" max="360"> <br>
 	<input type="range" onchange="updateOkul(2)" id="OkulPart-2" class="hueSlider" min="0" max="360"> <br>
-	<input type="range" onchange="updateOkul(3)" id="OkulPart-3" class="hueSlider" min="0" max="360"> <br>
 	<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/HueScale.svg/320px-HueScale.svg.png">
 	<form>
 		<input type="text" placeholder="Nimi"> <br>
