@@ -1,5 +1,5 @@
-<script type='text/javascript' src='tinycolor.js'></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+
 <script type='text/javascript'>
 	var okulW = 436;
 	var okulH = 400;
@@ -7,13 +7,25 @@
 	var maskData;
 	var okulRaw;
 	function loadOkul() {
-		document.getElementById("okulCanvas").width = okulW;
-		document.getElementById("okulCanvas").height = okulH;
-		document.getElementById("okulPanel").style.width = okulW;
-		document.getElementById("okulPanel").style.height = okulH;
-		document.getElementById("clickOverlay").width = okulW;
-		document.getElementById("clickOverlay").height = okulH;
-	
+		var tOkulCanvas = document.getElementById("okulCanvas");
+		var tOkulPanel = document.getElementById("okulPanel");
+		var tClickOverlay = document.getElementById("clickOverlay");
+		tOkulCanvas.width = okulW;
+		tOkulCanvas.height = okulH;
+		tOkulPanel.style.width = okulW;
+		tOkulPanel.style.height = okulH;
+		tClickOverlay.width = okulW;
+		tClickOverlay.height = okulH;
+		
+		var okulCanvas = document.getElementById("okulCanvas").getContext("2d");
+		var okulImage = new Image();
+		//okulImage.crossOrigin = "anonymous";
+		okulImage.onload = function() {
+			okulCanvas.drawImage(okulImage,0,0);
+			okulRaw = okulCanvas.getImageData(0,0,okulW,okulH).data;
+		}
+		okulImage.src = "okulImage.png";
+
 		var maskCanvas = document.createElement('canvas');
 		maskCanvas.width  = okulW;
 		maskCanvas.height = okulH;
@@ -24,16 +36,6 @@
 			maskData = maskCanvas.getContext("2d").getImageData(0,0,okulW,okulH).data;
 		}
 		maskImage.src = "okulMask.png";
-		
-		
-		var okulCanvas = document.getElementById("okulCanvas").getContext("2d");
-		var okulImage = new Image();
-		//okulImage.crossOrigin = "anonymous";
-		okulImage.onload = function() {
-			okulCanvas.drawImage(okulImage,0,0);
-			okulRaw = okulCanvas.getImageData(0,0,okulW,okulH).data;
-		}
-		okulImage.src = "okulImage.png";
 	}
 	
 	/*PartColor:
@@ -43,17 +45,21 @@
 	160 - Ears
 	200 - Wings
 	*/ 
-	function updateOkul(targetHue,partId)
+	function updateOkul(targetHue,partId,y,h)
 	{
+		//var start = new Date().getTime();
+		//TIMING
+
 		var okulCanvas = document.getElementById("okulCanvas").getContext("2d");
-		var okulData = okulCanvas.getImageData(0,0,okulW,okulH);
+		var okulData = okulCanvas.getImageData(0,y,okulW,h);
 		var curColor;
-		
-		for(var i = 0; i < okulData.data.length; i+=4)
+		var tDataSize = okulData.data.length;
+		var tRawShift = (y*okulW*4);
+		for(var i = 0; i < tDataSize; i+=4)
 		{	
-			if(maskData[i] == partId && okulRaw[i+3] != 0)
+			if(maskData[i+tRawShift] == partId && okulRaw[i+tRawShift+3] != 0)
 			{
-				curColor = tinycolor({ r: okulRaw[i], g: okulRaw[i+1], b: okulRaw[i+2], a: okulRaw[i+3] }).toHsl();
+				curColor = tinycolor({ r: okulRaw[i+tRawShift], g: okulRaw[i+tRawShift+1], b: okulRaw[i+tRawShift+2], a: okulRaw[i+tRawShift+3] }).toHsl();
 				curColor.h = targetHue;
 				curColor.s = Math.min(curColor.s + 0.3, 1.0);
 				curColor = tinycolor(curColor).toRgb();
@@ -62,8 +68,12 @@
 				okulData.data[i+2] = curColor.b;
 			} 
 		}
-		okulCanvas.putImageData(okulData,0,0);
-		//console.log("Jes");
+		okulCanvas.putImageData(okulData,0,y);
+		
+		//END TIMING
+		//var end = new Date().getTime();
+		//var time = end - start;
+		//alert('Aeg: ' + time);
 	}
 
 	function toggleColorMenu(partId)
@@ -71,6 +81,10 @@
 		
 	}
 </script>
+
+<script type='text/javascript' src='tinycolor.js'></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
 <style>
 	input.hueSlider {
     	width: 302px;
@@ -92,6 +106,7 @@
 	
 	}
 </style>
+
 <body onLoad="loadOkul()" id="root">
 	<div id="okulPanel" style="position: relative;">
 		<canvas id="okulCanvas" width="300" height="300" style="position: absolute;"></canvas>
@@ -100,14 +115,14 @@
 			<area href="javascript:toggleColorMenu(1)" shape="poly" coords="64,179,83,276,374,274,364,172">
 		</map>
 		<div id="colorMenu" class="" style="position:absolute;">
-			<div class="colorButton" onclick="updateOkul(0,80);" style="background-color: #FF0000"></div>
-			<div class="colorButton" onclick="updateOkul(120,80);" style="background-color: #00FF00"></div>
-			<div class="colorButton" onclick="updateOkul(240,80);" style="background-color: #0000FF"></div>
+			<div class="colorButton" onclick="updateOkul(0,80,164,152);" style="background-color: #FF0000"></div>
+			<div class="colorButton" onclick="updateOkul(120,80,164,152);" style="background-color: #00FF00"></div>
+			<div class="colorButton" onclick="updateOkul(240,80,164,152);" style="background-color: #0000FF"></div>
 		</div>
 	</div>
-	<input type="range" onchange="updateOkul(+this.value,40);" id="OkulPart-0" class="hueSlider" min="0" max="360"> <br>
-	<input type="range" onchange="updateOkul(+this.value,80);" id="OkulPart-1" class="hueSlider" min="0" max="360"> <br>
-	<input type="range" onchange="updateOkul(+this.value,120);" id="OkulPart-2" class="hueSlider" min="0" max="360"> <br>
+	<input type="range" onchange="updateOkul(+this.value,40,76,107);" id="OkulPart-0" class="hueSlider" min="0" max="360"> <br>
+	<input type="range" onchange="updateOkul(+this.value,80,164,152);" id="OkulPart-1" class="hueSlider" min="0" max="360"> <br>
+	<input type="range" onchange="updateOkul(+this.value,120,268,111);" id="OkulPart-2" class="hueSlider" min="0" max="360"> <br>
 	<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/HueScale.svg/320px-HueScale.svg.png">
 	<form>
 		<input type="text" placeholder="Nimi"> <br>
