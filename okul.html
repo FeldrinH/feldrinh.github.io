@@ -1,7 +1,10 @@
 <script type='text/javascript'>
 	var okulW = 436;
 	var okulH = 400;
-	var partCoords = [[20,20]];
+	var partId = 0;
+	var y = 0;
+	var h = 0;
+	var curButton = {};
 	var maskData;
 	var okulRaw;
 	function loadOkul() {
@@ -41,7 +44,7 @@
 	160 - Ears
 	200 - Wings
 	*/ 
-	function updateOkul(targetHue,partId,y,h)
+	function updateOkul(targetHue)
 	{
 		//var start = new Date().getTime();
 		//TIMING
@@ -72,19 +75,26 @@
 		//alert('Aeg: ' + time);
 	}
 
-	function toggleColorMenu(partId)
+	function changeButton(button)
 	{
-		console.log("check");
+		curButton.className = "cB";
+		button.className = "cB sB";
+		curButton = button;
+	}
+
+	function toggleColorMenu(newId, newY, newH)
+	{
+		partId = newId;
+		y = newY;
+		h = newH;
 		var okulButtons = document.getElementById("colorMenu");
 		console.log(okulButtons);
 		if(okulButtons.className == "")
 		{
-			console.log("on");
-			okulButtons.className = "hiddenMenu";
+			//okulButtons.className = "hide";
 		}
 		else
 		{
-			console.log("off");
 			okulButtons.className = "";
 		}
 	}
@@ -99,18 +109,23 @@
     	cursor: pointer;
 		margin-left: 9px;
 	}
-	div.colorButton{
+	
+	div.cB{
 		position:relative; 
 		width: 40; 
 		height: 40;
 		cursor: pointer;
-		float: left;
+		float: right;
 		border-style: solid;
 		border-width: 2px;
 		border-color: #000000;
 		margin-right: 2px;
+		margin-top: 2px;
 	}
-	div.hiddenMenu{
+	div.sB{
+		border-color: #AAAAAA;
+	}
+	div.hide{
 		visibility: hidden;
 	}
 </style>
@@ -120,12 +135,20 @@
 		<canvas id="okulCanvas" width="300" height="300" style="position: absolute;"></canvas>
 		<img src="transp.png" id="clickOverlay" usemap="#okulMap" width="300" height="300" style="position: absolute;">
 		<map name="okulMap">
-			<area href="javascript:toggleColorMenu(1)" shape="poly" coords="64,179,83,276,374,274,364,172">
+			<area href="javascript:toggleColorMenu(40,76,107)" shape="poly" coords="57,182,366,167,319,92,84,81">
+			<area href="javascript:toggleColorMenu(80,164,152)" shape="poly" coords="64,179,83,276,374,274,364,172">
+			<area href="javascript:toggleColorMenu(120,268,111)" shape="poly" coords="77,273,121,338,200,374,307,348,356,312,367,261">
 		</map>
-		<div id="colorMenu" class="hiddenMenu" style="position:absolute;">
-			<div class="colorButton" onclick="updateOkul(0,80,164,152);" style="background-color: #FF0000"></div>
-			<div class="colorButton" onclick="updateOkul(120,80,164,152);" style="background-color: #00FF00"></div>
-			<div class="colorButton" onclick="updateOkul(240,80,164,152);" style="background-color: #0000FF"></div>
+		<div id="colorMenu" class="hide" style="position:absolute; left: 400px; width: 150px">
+			<div class="cB" onclick="changeButton(this); updateOkul(0);" style="background-color: #FF0000"></div>
+			<div class="cB" onclick="changeButton(this); updateOkul(120);" style="background-color: #00FF00"></div>
+			<div class="cB" onclick="changeButton(this); updateOkul(240);" style="background-color: #0000FF"></div>
+			<div class="cB" onclick="changeButton(this); updateOkul(0);" style="background-color: #FF0000"></div>
+			<div class="cB" onclick="changeButton(this); updateOkul(120);" style="background-color: #00FF00"></div>
+			<div class="cB" onclick="changeButton(this); updateOkul(240);" style="background-color: #0000FF"></div>
+			<div class="cB" onclick="changeButton(this); updateOkul(0);" style="background-color: #FF0000"></div>
+			<div class="cB" onclick="changeButton(this); updateOkul(120);" style="background-color: #00FF00"></div>
+			<div class="cB" onclick="changeButton(this); updateOkul(240);" style="background-color: #0000FF"></div>
 		</div>
 	</div>
 	<input type="range" onchange="updateOkul(+this.value,40,76,107);" id="OkulPart-0" class="hueSlider" min="0" max="360"> <br>
