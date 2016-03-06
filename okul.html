@@ -4,9 +4,10 @@
 	var partId = 0;
 	var y = 0;
 	var h = 0;
-	var curButton = {};
 	var maskData;
 	var okulRaw;
+	var curButtons = [];
+
 	function loadOkul() {
 		var tOkulCanvas = document.getElementById("okulCanvas");
 		var tOkulPanel = document.getElementById("okulPanel");
@@ -35,6 +36,13 @@
 			maskData = maskCanvas.getContext("2d").getImageData(0,0,okulW,okulH).data;
 		}
 		maskImage.src = "okulMask.png";
+
+		var globalDefault = document.getElementById('defColor');
+		curButtons[40] = globalDefault;
+		curButtons[80] = globalDefault;
+		curButtons[120] = globalDefault;
+		curButtons[160] = globalDefault;
+		curButtons[200] = globalDefault;
 	}
 	
 	/*PartColor:
@@ -77,26 +85,30 @@
 
 	function changeButton(button)
 	{
-		curButton.className = "cB";
+		curButtons[partId].className = "cB";
 		button.className = "cB sB";
-		curButton = button;
+		curButtons[partId] = button;
 	}
 
 	function toggleColorMenu(newId, newY, newH)
 	{
-		partId = newId;
+		if(partId != 0)
+		{
+			curButtons[partId].className = "cB";
+		}
+		curButtons[newId].className = "cB sB";
 		y = newY;
 		h = newH;
 		var okulButtons = document.getElementById("colorMenu");
-		console.log(okulButtons);
-		if(okulButtons.className == "")
+		if(okulButtons.className == "" && partId == newId)
 		{
-			//okulButtons.className = "hide";
+			okulButtons.className = "hide";
 		}
 		else
 		{
 			okulButtons.className = "";
 		}
+		partId = newId;
 	}
 </script>
 
@@ -112,8 +124,8 @@
 	
 	div.cB{
 		position:relative; 
-		width: 40; 
-		height: 40;
+		padding: 15%;
+		box-sizing: border-box;
 		cursor: pointer;
 		float: right;
 		border-style: solid;
@@ -139,8 +151,8 @@
 			<area href="javascript:toggleColorMenu(80,164,152)" shape="poly" coords="64,179,83,276,374,274,364,172">
 			<area href="javascript:toggleColorMenu(120,268,111)" shape="poly" coords="77,273,121,338,200,374,307,348,356,312,367,261">
 		</map>
-		<div id="colorMenu" class="hide" style="position:absolute; left: 400px; width: 150px">
-			<div class="cB" onclick="changeButton(this); updateOkul(0);" style="background-color: #FF0000"></div>
+		<div id="colorMenu" class="hide" style="position:absolute; left: 400px; width: 200px;">
+			<div class="cB" id="defColor" onclick="changeButton(this); updateOkul(0);" style="background-color: #FF0000"></div>
 			<div class="cB" onclick="changeButton(this); updateOkul(120);" style="background-color: #00FF00"></div>
 			<div class="cB" onclick="changeButton(this); updateOkul(240);" style="background-color: #0000FF"></div>
 			<div class="cB" onclick="changeButton(this); updateOkul(0);" style="background-color: #FF0000"></div>
