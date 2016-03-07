@@ -1,9 +1,9 @@
 <script type='text/javascript'>
 	var okulW = 436;
 	var okulH = 400;
-	var partId = 0;
+	var partId = 40;
 	var y = 0;
-	var h = 0;
+	var h = 400;
 	var maskData;
 	var okulRaw;
 	var curButtons = [];
@@ -51,8 +51,9 @@
 	120 - Bottom Body
 	160 - Ears
 	200 - Wings
+	240 - Nose
 	*/ 
-	function updateOkul(targetHue)
+	function updateOkul(targetHue,multSat,addSat,multLum,addLum)
 	{
 		//var start = new Date().getTime();
 		//TIMING
@@ -68,7 +69,8 @@
 			{
 				curColor = tinycolor({ r: okulRaw[i+tRawShift], g: okulRaw[i+tRawShift+1], b: okulRaw[i+tRawShift+2], a: okulRaw[i+tRawShift+3] }).toHsl();
 				curColor.h = targetHue;
-				curColor.s = Math.min(curColor.s + 0.3, 1.0);
+				curColor.s = Math.min(curColor.s*multSat+addSat, 1.0);
+				curColor.l = Math.min(curColor.l*multLum+addLum, 1.0);
 				curColor = tinycolor(curColor).toRgb();
 				okulData.data[i] = curColor.r;
 				okulData.data[i+1] = curColor.g;
@@ -92,10 +94,7 @@
 
 	function toggleColorMenu(newId, newY, newH)
 	{
-		if(partId != 0)
-		{
-			curButtons[partId].className = "cB";
-		}
+		curButtons[partId].className = "cB";
 		curButtons[newId].className = "cB sB";
 		y = newY;
 		h = newH;
@@ -125,10 +124,14 @@
 	div.cB{
 		position:relative;
 		padding: 14%;
-		padding: calc(15% - 2px);
+		padding: calc(16% - 3px);
+		width: 0px;
+		height: 0px;
 		box-sizing: border-box;
 		cursor: pointer;
-		float: right;
+		vertical-align:top;
+        display:inline-block;
+        margin: auto;
 		border-style: solid;
 		border-width: 2px;
 		border-color: #000000;
@@ -151,21 +154,26 @@
 			<area href="javascript:toggleColorMenu(80,164,152)" shape="poly" coords="64,179,83,276,374,274,364,172">
 			<area href="javascript:toggleColorMenu(120,268,111)" shape="poly" coords="77,273,121,338,200,374,307,348,356,312,367,261">
 		</map>
-		<div id="colorMenu" class="hide" style="position:absolute; left: 400px; width: 200px;">
-			<div class="cB" id="defColor" onclick="changeButton(this); updateOkul(0);" style="background-color: #FF0000"></div>
-			<div class="cB" onclick="changeButton(this); updateOkul(120);" style="background-color: #00FF00"></div>
-			<div class="cB" onclick="changeButton(this); updateOkul(240);" style="background-color: #0000FF"></div>
-			<div class="cB" onclick="changeButton(this); updateOkul(0);" style="background-color: #FF0000"></div>
-			<div class="cB" onclick="changeButton(this); updateOkul(120);" style="background-color: #00FF00"></div>
-			<div class="cB" onclick="changeButton(this); updateOkul(240);" style="background-color: #0000FF"></div>
-			<div class="cB" onclick="changeButton(this); updateOkul(0);" style="background-color: #FF0000"></div>
-			<div class="cB" onclick="changeButton(this); updateOkul(120);" style="background-color: #00FF00"></div>
-			<div class="cB" onclick="changeButton(this); updateOkul(240);" style="background-color: #0000FF"></div>
+		<div id="colorMenu" class="hide" style="position:absolute; left: 436px; width: 200px; font-size: 0px; text-align: center;">
+			<div class="cB" id="defColor" onclick="changeButton(this); updateOkul(353, 2.5, 0.07, 0.94, 0.01);" style="background-color: #800020"></div>
+			<div class="cB" onclick="changeButton(this); updateOkul(0, 1.1, 0.43, 1.19, 0.07);" style="background-color: #E30000"></div>
+			<div class="cB" onclick="changeButton(this); updateOkul(229,0.98,0,1.19,0.07);" style="background-color: #3E38EB"></div>
+			<div class="cB" onclick="changeButton(this); updateOkul(173,1.95,0.24,1.19,0.08);" style="background-color: #4dffff"></div>
+			<div class="cB" onclick="changeButton(this); updateOkul();" style="background-color: #000"></div>
+			<div class="cB" onclick="changeButton(this); updateOkul();" style="background-color: #000"></div>
+			<div class="cB" onclick="changeButton(this); updateOkul();" style="background-color: #000"></div>
+			<div class="cB" onclick="changeButton(this); updateOkul();" style="background-color: #000"></div>
+			<div class="cB" onclick="changeButton(this); updateOkul();" style="background-color: #000"></div>
+			<div class="cB" onclick="changeButton(this); updateOkul();" style="background-color: #000"></div>
+			<div class="cB" onclick="changeButton(this); updateOkul();" style="background-color: #000"></div>
+			<div class="cB" onclick="changeButton(this); updateOkul();" style="background-color: #000"></div>
 		</div>
 	</div>
-	<input type="range" onchange="updateOkul(+this.value,40,76,107);" id="OkulPart-0" class="hueSlider" min="0" max="360"> <br>
-	<input type="range" onchange="updateOkul(+this.value,80,164,152);" id="OkulPart-1" class="hueSlider" min="0" max="360"> <br>
-	<input type="range" onchange="updateOkul(+this.value,120,268,111);" id="OkulPart-2" class="hueSlider" min="0" max="360"> <br>
+	<input type="range" onchange="updateOkul(+this.value,document.getElementById('OSat').value*0.01,document.getElementById('OASat').value*0.01,document.getElementById('OLum').value*0.01, document.getElementById('OALum').value*0.01); document.getElementById('LHue').innerHTML = this.value;" id="OHue" class="hueSlider" min="0" max="360"><span id='LHue'></span><br>
+	<input type="range" onchange="updateOkul(document.getElementById('OHue').value,this.value*0.01,document.getElementById('OASat').value*0.01,document.getElementById('OLum').value*0.01, document.getElementById('OALum').value*0.01); document.getElementById('LSat').innerHTML = this.value*0.01;" id="OSat" class="hueSlider" min="0" max="300"><span id='LSat'></span><br>
+	<input type="range" onchange="updateOkul(document.getElementById('OHue').value,document.getElementById('OSat').value*0.01,this.value*0.01,document.getElementById('OLum').value*0.01, document.getElementById('OALum').value*0.01); document.getElementById('LASat').innerHTML = this.value*0.01;" id="OASat" class="hueSlider" min="-100" max="100"><span id='LASat'></span><br>
+	<input type="range" onchange="updateOkul(document.getElementById('OHue').value,document.getElementById('OSat').value*0.01,document.getElementById('OASat').value*0.01,this.value*0.01, document.getElementById('OALum').value*0.01); document.getElementById('LLum').innerHTML = this.value*0.01;" id="OLum" class="hueSlider" min="0" max="200"><span id='LLum'></span><br>
+	<input type="range" onchange="updateOkul(document.getElementById('OHue').value, document.getElementById('OSat').value*0.01,document.getElementById('OASat').value*0.01, document.getElementById('OLum').value*0.01, this.value*0.01); document.getElementById('LALum').innerHTML = this.value*0.01;" id="OALum" class="hueSlider" min="-100" max="100"><span id='LALum'></span><br>
 	<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/HueScale.svg/320px-HueScale.svg.png">
 	<form>
 		<input type="text" placeholder="Nimi"> <br>
