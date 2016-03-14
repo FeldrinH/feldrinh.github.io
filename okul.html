@@ -28,12 +28,12 @@
 
 	function loadOkul() {
 		var tOkulCanvas = document.getElementById("okulCanvas");
-		var tOkulPanel = document.getElementById("okulPanel");
-		var tClickOverlay = document.getElementById("clickOverlay");
+		//var tOkulPanel = document.getElementById("okulPanel");
+		//var tClickOverlay = document.getElementById("clickOverlay");
 		tOkulCanvas.width = okulW;
 		tOkulCanvas.height = okulH;
-		tOkulPanel.style.width = okulW;
-		tOkulPanel.style.height = okulH;
+		//tOkulPanel.style.width = okulW;
+		//tOkulPanel.style.height = okulH;
 		//tClickOverlay.width = okulW;
 		//tClickOverlay.height = okulH;
 		
@@ -212,24 +212,19 @@
 </style>
 
 <body onLoad="loadOkul()" id="root">
-	<div id="okulPanel" style="position: relative;">
-		<canvas id="okulCanvas" width="300" height="300" style="position: absolute;"></canvas>
-		<div class="okulPart" onclick="toggleColorMenu(40,76,107);" style="z-index:15;left:14.7%;width:68.3%;top:19.5%;height:25.00000%">  </div>
-		<div class="okulPart" onclick="toggleColorMenu(80,164,152);" style="z-index:10;left:14.2%;width:71.3%;top:41.5%;height:28.5000%">  </div>
-		<div class="okulPart" onclick="toggleColorMenu(120,268,111);" style="z-index:10;left:17.8%;width:67.0%;top:70.0%;height:25.000%">  </div>
-		<div class="okulPart" onclick="toggleColorMenu(200,160,160);" style="z-index:20;left:83.7%;width:11.9%;top:44.0%;height:29.0%">  </div>
-		<div class="okulPart" onclick="toggleColorMenu(200,160,160);" style="z-index:20;left:3.40%;width:14.2%;top:53.0%;height:26.500%">  </div>
-		<div class="okulPart" onclick="toggleColorMenu(160,19,113);" style="z-index:20;left:21.6%;width:8.94%;top:6.00%;height:25.250%">  </div>
-		<div class="okulPart" onclick="toggleColorMenu(160,19,113);" style="z-index:20;left:60.6%;width:9.86%;top:5.25%;height:25.000%">  </div>
-		<div class="okulPart" onclick="toggleColorMenu(240,233,68);" style="z-index:25;left:47.0%;width:14.9%;top:59.75%;height:12.75%">  </div>
+	<div id="okulPanel" style="position: relative; width: 40%">
+		<canvas id="okulCanvas" width="300" height="300" style="position: relative; width: 100%;"></canvas>
+
+		<div class="okulPart" onclick="toggleColorMenu(40,76,107);" style="z-index:15;left:14.7%;width:68.3%;top:19.5%;height:25.00000%"></div>
+		<div class="okulPart" onclick="toggleColorMenu(80,164,152);" style="z-index:10;left:14.2%;width:71.3%;top:41.5%;height:28.5000%"></div>
+		<div class="okulPart" onclick="toggleColorMenu(120,268,111);" style="z-index:10;left:17.8%;width:67.0%;top:70.0%;height:25.000%"></div>
+		<div class="okulPart" onclick="toggleColorMenu(200,160,160);" style="z-index:20;left:83.7%;width:11.9%;top:43.0%;height:30.00%"></div>
+		<div class="okulPart" onclick="toggleColorMenu(200,160,160);" style="z-index:20;left:3.40%;width:14.2%;top:48.0%;height:31.500%"></div>
+		<div class="okulPart" onclick="toggleColorMenu(160,19,113);" style="z-index:20;left:21.6%;width:8.94%;top:6.00%;height:25.250%"></div>
+		<div class="okulPart" onclick="toggleColorMenu(160,19,113);" style="z-index:20;left:60.6%;width:9.86%;top:5.25%;height:25.000%"></div>
+		<div class="okulPart" onclick="toggleColorMenu(240,233,68);" style="z-index:25;left:47.0%;width:14.9%;top:59.75%;height:12.75%"></div>
 		
-		<!--<img src="transp.png" id="clickOverlay" usemap="#okulMap" width="300" height="300" style="position: absolute;">
-		<map name="okulMap">
-			<area href="javascript:toggleColorMenu(40,76,107)" shape="poly" coords="57,182,366,167,319,92,84,81">
-			<area href="javascript:toggleColorMenu(80,164,152)" shape="poly" coords="64,179,83,276,374,274,364,172">
-			<area href="javascript:toggleColorMenu(120,268,111)" shape="poly" coords="77,273,121,338,200,374,307,348,356,312,367,261">
-		</map>-->
-		<div id="colorMenu" class="hide" style="position:absolute; left: 436px; width: 200px; font-size: 0px; text-align: center;">
+		<div id="colorMenu" class="hide" style="position:absolute; left: 100%; top:0px; width: 50%; font-size: 0px; text-align: center;">
 			<div class="cB" title="Valge" id="def-white" onclick="changeButton(this); updateOkul(0,0,-1,1,0.55);" style="background-color: #ffffff"></div>
 			<div class="cB" title="Punane" id="def-red" onclick="changeButton(this); updateOkul(0, 1.1, 0.43, 1.19, 0.07);" style="background-color: #E30000"></div>
 			<div class="cB" title="Helesinine" onclick="changeButton(this); updateOkul(185,1.95,0.2,1.19,0.08);" style="background-color: #4dffff"></div>
