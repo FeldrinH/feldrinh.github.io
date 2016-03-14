@@ -7,6 +7,7 @@
 	var maskData;
 	var okulRaw;
 	var curButtons = [];
+	var rgbScale = 1/255; 
 
 	function loadOkul() {
 		var tOkulCanvas = document.getElementById("okulCanvas");
@@ -55,34 +56,46 @@
 	*/ 
 	function updateOkul(targetHue,multSat,addSat,multLum,addLum)
 	{
-		//var start = new Date().getTime();
-		//TIMING
-
 		var okulCanvas = document.getElementById("okulCanvas").getContext("2d");
 		var okulData = okulCanvas.getImageData(0,y,okulW,h);
 		var curColor;
 		var tDataSize = okulData.data.length;
 		var tRawShift = (y*okulW*4);
+
+		var r,b,g;
+		var h,s,l;
+
 		for(var i = 0; i < tDataSize; i+=4)
 		{	
 			if(maskData[i+tRawShift] == partId && okulRaw[i+tRawShift+3] != 0)
-			{
-				curColor = tinycolor({ r: okulRaw[i+tRawShift], g: okulRaw[i+tRawShift+1], b: okulRaw[i+tRawShift+2], a: okulRaw[i+tRawShift+3] }).toHsl();
-				curColor.h = targetHue;
-				curColor.s = Math.min(curColor.s*multSat+addSat, 1.0);
-				curColor.l = Math.min(curColor.l*multLum+addLum, 1.0);
-				curColor = tinycolor(curColor).toRgb();
+			{				
+				r = okulRaw[i+tRawShift] * rgbScale;
+				g = okulRaw[i+tRawShift+1] * rgbScale;
+				b = okulRaw[i+tRawShift+2] * rgbScale;
+
+				var max = mathMax(r, g, b);
+				var min = mathMin(r, g, b);
+
+				l = (max + min) / 2;
+
+				if(max == min) {
+				   s = 0;
+				}
+				else {
+					var d = max - min;
+					s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+				}
+
+				h = targetHue;
+				s = Math.min(s*multSat+addSat, 1.0);
+				l = Math.min(l*multLum+addLum, 1.0);
+
 				okulData.data[i] = curColor.r;
 				okulData.data[i+1] = curColor.g;
 				okulData.data[i+2] = curColor.b;
 			} 
 		}
 		okulCanvas.putImageData(okulData,0,y);
-		
-		//END TIMING
-		//var end = new Date().getTime();
-		//var time = end - start;
-		//alert('Aeg: ' + time);
 	}
 
 	function changeButton(button)
@@ -116,8 +129,8 @@
 
 <style>
 	input.hueSlider {
-    	width: 302px;
-    	cursor: pointer;
+		width: 302px;
+		cursor: pointer;
 		margin-left: 9px;
 	}
 	
@@ -130,8 +143,8 @@
 		box-sizing: border-box;
 		cursor: pointer;
 		vertical-align:top;
-        display:inline-block;
-        margin: auto;
+		display:inline-block;
+		margin: auto;
 		border-style: solid;
 		border-width: 2px;
 		border-color: #000000;
