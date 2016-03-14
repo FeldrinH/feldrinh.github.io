@@ -8,6 +8,14 @@
 	var okulRaw;
 	var curButtons = [];
 
+	function setDefault(buttonName, colorId)
+	{
+		var globalDefault = document.getElementById(buttonName);
+		curButtons[colorId] = globalDefault;
+		partId = colorId;
+		globalDefault.onclick();
+	}
+
 	function loadOkul() {
 		var tOkulCanvas = document.getElementById("okulCanvas");
 		var tOkulPanel = document.getElementById("okulPanel");
@@ -16,33 +24,46 @@
 		tOkulCanvas.height = okulH;
 		tOkulPanel.style.width = okulW;
 		tOkulPanel.style.height = okulH;
-		tClickOverlay.width = okulW;
-		tClickOverlay.height = okulH;
+		//tClickOverlay.width = okulW;
+		//tClickOverlay.height = okulH;
 		
 		var okulCanvas = document.getElementById("okulCanvas").getContext("2d");
 		var okulImage = new Image();
 		okulImage.onload = function() {
 			okulCanvas.drawImage(okulImage,0,0);
 			okulRaw = okulCanvas.getImageData(0,0,okulW,okulH).data;
+
+			var maskCanvas = document.createElement('canvas');
+			maskCanvas.width  = okulW;
+			maskCanvas.height = okulH;
+			var maskImage = new Image();
+			maskImage.onload = function() {
+				maskCanvas.getContext("2d").drawImage(maskImage,0,0);
+				maskData = maskCanvas.getContext("2d").getImageData(0,0,okulW,okulH).data;
+				
+				y = 0;
+				h = okulH;
+				setDefault("def-blue",40);
+				setDefault("def-black",80);
+				setDefault("def-white",120);
+				setDefault("def-red",160);
+				setDefault("def-black",200);
+				setDefault("def-red",240);
+
+				setOkulBox();
+
+				changeButton = function(button)
+				{
+					curButtons[partId].className = "cB";
+					button.className = "cB sB";
+					curButtons[partId] = button;
+
+					setOkulBox();
+				}
+			}
+			maskImage.src = "okulMask.png";
 		}
 		okulImage.src = "okulImage.png";
-
-		var maskCanvas = document.createElement('canvas');
-		maskCanvas.width  = okulW;
-		maskCanvas.height = okulH;
-		var maskImage = new Image();
-		maskImage.onload = function() {
-			maskCanvas.getContext("2d").drawImage(maskImage,0,0);
-			maskData = maskCanvas.getContext("2d").getImageData(0,0,okulW,okulH).data;
-		}
-		maskImage.src = "okulMask.png";
-
-		var globalDefault = document.getElementById('defColor');
-		curButtons[40] = globalDefault;
-		curButtons[80] = globalDefault;
-		curButtons[120] = globalDefault;
-		curButtons[160] = globalDefault;
-		curButtons[200] = globalDefault;
 	}
 	
 	/*PartColor:
@@ -87,9 +108,6 @@
 
 	function changeButton(button)
 	{
-		curButtons[partId].className = "cB";
-		button.className = "cB sB";
-		curButtons[partId] = button;
 	}
 
 	function toggleColorMenu(newId, newY, newH)
@@ -108,6 +126,17 @@
 			okulButtons.className = "";
 		}
 		partId = newId;
+	}
+
+	function setOkulBox()
+	{
+		document.getElementById("OkulBox").value = 
+		"Ülakeha: " + curButtons[40].title + ",  " +
+		"Keskkeha: " + curButtons[80].title + ",  " +
+		"Alakeha: " + curButtons[120].title + ",  " +
+		"Kõrvad: " + curButtons[160].title + ",  " +
+		"Tiivad: " + curButtons[200].title + ",  " +
+		"Nina: " + curButtons[240].title;
 	}
 </script>
 
@@ -143,30 +172,47 @@
 	div.hide{
 		visibility: hidden;
 	}
+	div.okulPart{
+		background-color: rgba(0,0,0,0);
+		opacity: 0.0;
+		/*background-color: #E30000;
+		opacity: 0.2;*/
+		position: absolute;
+		cursor: pointer;
+	}
 </style>
 
 <body onLoad="loadOkul()" id="root">
 	<div id="okulPanel" style="position: relative;">
 		<canvas id="okulCanvas" width="300" height="300" style="position: absolute;"></canvas>
-		<img src="transp.png" id="clickOverlay" usemap="#okulMap" width="300" height="300" style="position: absolute;">
+		<div class="okulPart" onclick="toggleColorMenu(40,76,107);" style="z-index:15;left:14.7%;width:68.3%;top:19.5%;height:25.00000%">  </div>
+		<div class="okulPart" onclick="toggleColorMenu(80,164,152);" style="z-index:10;left:14.2%;width:71.3%;top:41.5%;height:28.5000%">  </div>
+		<div class="okulPart" onclick="toggleColorMenu(120,268,111);" style="z-index:10;left:17.8%;width:67.0%;top:70.0%;height:25.000%">  </div>
+		<div class="okulPart" onclick="toggleColorMenu(200,160,160);" style="z-index:20;left:83.7%;width:11.9%;top:44.0%;height:29.0%">  </div>
+		<div class="okulPart" onclick="toggleColorMenu(200,160,160);" style="z-index:20;left:3.40%;width:14.2%;top:53.0%;height:26.500%">  </div>
+		<div class="okulPart" onclick="toggleColorMenu(160,19,113);" style="z-index:20;left:21.6%;width:8.94%;top:6.00%;height:25.250%">  </div>
+		<div class="okulPart" onclick="toggleColorMenu(160,19,113);" style="z-index:20;left:60.6%;width:9.86%;top:5.25%;height:25.000%">  </div>
+		<div class="okulPart" onclick="toggleColorMenu(240,233,68);" style="z-index:25;left:47.0%;width:14.9%;top:59.75%;height:12.75%">  </div>
+		
+		<!--<img src="transp.png" id="clickOverlay" usemap="#okulMap" width="300" height="300" style="position: absolute;">
 		<map name="okulMap">
 			<area href="javascript:toggleColorMenu(40,76,107)" shape="poly" coords="57,182,366,167,319,92,84,81">
 			<area href="javascript:toggleColorMenu(80,164,152)" shape="poly" coords="64,179,83,276,374,274,364,172">
 			<area href="javascript:toggleColorMenu(120,268,111)" shape="poly" coords="77,273,121,338,200,374,307,348,356,312,367,261">
-		</map>
+		</map>-->
 		<div id="colorMenu" class="hide" style="position:absolute; left: 436px; width: 200px; font-size: 0px; text-align: center;">
-			<div class="cB" id="defColor" onclick="changeButton(this); updateOkul(340, 2.5, 0.07, 0.9, 0.01);" style="background-color: #800020"></div>
-			<div class="cB" onclick="changeButton(this); updateOkul(0, 1.1, 0.43, 1.19, 0.07);" style="background-color: #E30000"></div>
-			<div class="cB" onclick="changeButton(this); updateOkul(237,1.2,0.0,1.19,0.07);" style="background-color: #3E38EB"></div>
-			<div class="cB" onclick="changeButton(this); updateOkul(185,1.95,0.2,1.19,0.08);" style="background-color: #4dffff"></div>
-			<div class="cB" onclick="changeButton(this); updateOkul(312,0.8,0,1.05,0.1);" style="background-color: #000"></div>
-			<div class="cB" onclick="changeButton(this); updateOkul(39,0.91,0.45,1.39,0.2);" style="background-color: #000"></div>
-			<div class="cB" onclick="changeButton(this); updateOkul(0,0,-1,0.37,0);" style="background-color: #000"></div>
-			<div class="cB" onclick="changeButton(this); updateOkul(335,0.51,0.3,0.92,0.45);" style="background-color: #000"></div>
-			<div class="cB" onclick="changeButton(this); updateOkul(0,0,-1,1,0.55);" style="background-color: #000"></div>
-			<div class="cB" onclick="changeButton(this); updateOkul(55,1.08,0.48,1.3,0.22);" style="background-color: #000"></div>
-			<div class="cB" onclick="changeButton(this); updateOkul(75,1.64,0,1.41,0.18);" style="background-color: #000"></div>
-			<div class="cB" onclick="changeButton(this); updateOkul(93,1.48,0.15,1.41,0.03);" style="background-color: #000"></div>
+			<div class="cB" title="Valge" id="def-white" onclick="changeButton(this); updateOkul(0,0,-1,1,0.55);" style="background-color: #ffffff"></div>
+			<div class="cB" title="Punane" id="def-red" onclick="changeButton(this); updateOkul(0, 1.1, 0.43, 1.19, 0.07);" style="background-color: #E30000"></div>
+			<div class="cB" title="Helesinine" onclick="changeButton(this); updateOkul(185,1.95,0.2,1.19,0.08);" style="background-color: #4dffff"></div>
+			<div class="cB" title="Must" id="def-black" onclick="changeButton(this); updateOkul(0,0,-1,0.37,0);" style="background-color: #000000"></div>
+			<div class="cB" title="Tumepunane" onclick="changeButton(this); updateOkul(340, 2.5, 0.07, 0.9, 0.01);" style="background-color: #800020"></div>
+			<div class="cB" title="Sinine" id="def-blue" onclick="changeButton(this); updateOkul(237,1.2,0.0,1.19,0.07);" style="background-color: #3E38EB"></div>
+			<div class="cB" title="Roosa" onclick="changeButton(this); updateOkul(335,0.51,0.3,0.92,0.45);" style="background-color: #ff57d6"></div>
+			<div class="cB" title="Kollane" onclick="changeButton(this); updateOkul(55,1.08,0.48,1.3,0.22);" style="background-color: #f8e000"></div>
+			<div class="cB" title="Heleroheline" onclick="changeButton(this); updateOkul(75,1.64,0,1.41,0.18);" style="background-color: #a2ff00"></div>
+			<div class="cB" title="Lilla" onclick="changeButton(this); updateOkul(312,0.8,0,1.05,0.1);" style="background-color: #b800ee"></div>
+			<div class="cB" title="Oran&#382;" onclick="changeButton(this); updateOkul(39,0.91,0.45,1.39,0.2);" style="background-color: #facc00"></div>
+			<div class="cB" title="Tumeroheline" onclick="changeButton(this); updateOkul(93,1.48,0.15,1.41,0.03);" style="background-color: #3f8300"></div>
 		</div>
 	</div>
 	<input type="range" onchange="updateOkul(+this.value,document.getElementById('OSat').value*0.01,document.getElementById('OASat').value*0.01,document.getElementById('OLum').value*0.01, document.getElementById('OALum').value*0.01); document.getElementById('LHue').innerHTML = this.value;" id="OHue" class="hueSlider" min="0" max="360"><span id='LHue'></span><br>
@@ -175,8 +221,10 @@
 	<input type="range" onchange="updateOkul(document.getElementById('OHue').value,document.getElementById('OSat').value*0.01,document.getElementById('OASat').value*0.01,this.value*0.01, document.getElementById('OALum').value*0.01); document.getElementById('LLum').innerHTML = this.value*0.01;" id="OLum" class="hueSlider" min="0" max="200"><span id='LLum'></span><br>
 	<input type="range" onchange="updateOkul(document.getElementById('OHue').value, document.getElementById('OSat').value*0.01,document.getElementById('OASat').value*0.01, document.getElementById('OLum').value*0.01, this.value*0.01); document.getElementById('LALum').innerHTML = this.value*0.01;" id="OALum" class="hueSlider" min="-50" max="50"><span id='LALum'></span><br>
 	<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/HueScale.svg/320px-HueScale.svg.png">
-	<form>
-		<input type="text" placeholder="Nimi"> <br>
-		<input type="email" placeholder="Meiliaadress"> <br>
+	<form action="https://getsimpleform.com/messages?form_api_token=5c571ca050557931c3b4e2cd3507dbc3" method="post" enctype="multipart/form-data">
+ 		<input type='text' name='Okul:' id="OkulBox" /> <br>
+ 		<input type='text' name='Nimi' /> <br>
+ 		<input type='email' name='Meil' /> <br>
+  		<input type='submit' value='Saada tellimus' />
 	</form>
 </body>
