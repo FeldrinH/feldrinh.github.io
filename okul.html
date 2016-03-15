@@ -181,8 +181,8 @@
 	
 	div.cB{
 		position:relative;
-		padding: 14%;
-		padding: calc(16% - 3px);
+		padding: 12.5%;
+		padding: calc(12.5% - 3px);
 		width: 0px;
 		height: 0px;
 		box-sizing: border-box;
@@ -208,6 +208,7 @@
 		opacity: 0.2;*/
 		position: absolute;
 		cursor: pointer;
+		-webkit-tap-highlight-color: rgba(0,0,0,0);
 	}
 </style>
 
@@ -226,16 +227,16 @@
 		
 		<div id="colorMenu" class="hide" style="position:absolute; left: 100%; top:0px; width: 50%; font-size: 0px; text-align: center;">
 			<div class="cB" title="Valge" id="def-white" onclick="changeButton(this); updateOkul(0,0,-1,1,0.55);" style="background-color: #ffffff"></div>
-			<div class="cB" title="Punane" id="def-red" onclick="changeButton(this); updateOkul(0, 1.1, 0.43, 1.19, 0.07);" style="background-color: #E30000"></div>
-			<div class="cB" title="Helesinine" onclick="changeButton(this); updateOkul(185,1.95,0.2,1.19,0.08);" style="background-color: #4dffff"></div>
 			<div class="cB" title="Must" id="def-black" onclick="changeButton(this); updateOkul(0,0,-1,0.37,0);" style="background-color: #000000"></div>
+			<div class="cB" title="Punane" id="def-red" onclick="changeButton(this); updateOkul(0, 1.1, 0.43, 1.19, 0.07);" style="background-color: #E30000"></div>
 			<div class="cB" title="Tumepunane" onclick="changeButton(this); updateOkul(340, 2.5, 0.07, 0.9, 0.01);" style="background-color: #800020"></div>
+			<div class="cB" title="Helesinine" onclick="changeButton(this); updateOkul(185,1.95,0.2,1.19,0.08);" style="background-color: #4dffff"></div>
 			<div class="cB" title="Sinine" id="def-blue" onclick="changeButton(this); updateOkul(237,1.2,0.0,1.19,0.07);" style="background-color: #3E38EB"></div>
 			<div class="cB" title="Roosa" onclick="changeButton(this); updateOkul(335,0.51,0.3,0.92,0.45);" style="background-color: #ff57d6"></div>
-			<div class="cB" title="Kollane" onclick="changeButton(this); updateOkul(55,1.08,0.48,1.3,0.22);" style="background-color: #f8e000"></div>
-			<div class="cB" title="Heleroheline" onclick="changeButton(this); updateOkul(75,1.64,0,1.41,0.18);" style="background-color: #a2ff00"></div>
 			<div class="cB" title="Lilla" onclick="changeButton(this); updateOkul(312,0.8,0,1.05,0.1);" style="background-color: #b800ee"></div>
+			<div class="cB" title="Kollane" onclick="changeButton(this); updateOkul(55,1.08,0.48,1.3,0.22);" style="background-color: #f8e000"></div>
 			<div class="cB" title="Oran&#382;" onclick="changeButton(this); updateOkul(39,0.91,0.45,1.39,0.2);" style="background-color: #facc00"></div>
+			<div class="cB" title="Heleroheline" onclick="changeButton(this); updateOkul(75,1.64,0,1.41,0.18);" style="background-color: #a2ff00"></div>
 			<div class="cB" title="Tumeroheline" onclick="changeButton(this); updateOkul(93,1.48,0.15,1.41,0.03);" style="background-color: #3f8300"></div>
 		</div>
 	</div>
@@ -246,7 +247,7 @@
 	<input type="range" onchange="updateOkul(document.getElementById('OHue').value, document.getElementById('OSat').value*0.01,document.getElementById('OASat').value*0.01, document.getElementById('OLum').value*0.01, this.value*0.01); document.getElementById('LALum').innerHTML = this.value*0.01;" id="OALum" class="hueSlider" min="-50" max="50"><span id='LALum'></span><br>
 	<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/HueScale.svg/320px-HueScale.svg.png">
 	<form action="https://getsimpleform.com/messages?form_api_token=5c571ca050557931c3b4e2cd3507dbc3" method="post" enctype="multipart/form-data">
-		<input type='text' name='Okul:' id="OkulBox" /> <br>
+		<input type='hidden' name='Okul:' id="OkulBox" /> <br>
 		<input type='text' name='Nimi' /> <br>
 		<input type='email' name='Meil' /> <br>
 		<input type='submit' value='Saada tellimus' />
